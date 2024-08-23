@@ -1,0 +1,96 @@
+[gd_scene load_steps=13 format=3 uid="uid://c23387n70yud4"]
+
+[ext_resource type="Script" path="res://slime.gd" id="1_tsb1d"]
+[ext_resource type="Texture2D" uid="uid://blepkmsftxx6a" path="res://assets/sprites/slime_purple.png" id="2_ouh5p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_thy3k"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u0mst"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o4i2j"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nh312"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nynyw"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jp72o"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nepld"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_utkln"]
+atlas = ExtResource("2_ouh5p")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q73qu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_thy3k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u0mst")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o4i2j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nh312")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nynyw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jp72o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nepld")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_utkln")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hgbwr"]
+size = Vector2(69, 75)
+
+[node name="Slime" type="CharacterBody2D"]
+script = ExtResource("1_tsb1d")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprite2D"]
+position = Vector2(1, 2)
+scale = Vector2(8.20833, 8.20833)
+sprite_frames = SubResource("SpriteFrames_q73qu")
+autoplay = "default"
+frame = 5
+frame_progress = 0.711012
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1.5, 51.5)
+shape = SubResource("RectangleShape2D_hgbwr")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -70.0
+offset_top = 111.0
+offset_right = 73.0
+offset_bottom = 138.0
