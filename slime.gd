@@ -21,12 +21,13 @@ func _physics_process(delta: float) -> void:
 		
 		if collider.has_method("take_damage"):
 			collider.take_damage(impact_damage)
+			PointCounter.count_point()
 			queue_free()
 
 func take_damage(damage: float):
 	health -= damage
 	health_bar.value = health
-	print(damage)
 	
 	if health <= 0:
+		PointCounter.count_point()
 		queue_free()

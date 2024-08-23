@@ -54,5 +54,13 @@ offset_bottom = 86.0
 theme_override_font_sizes/font_size = 31
 text = "0"
 
+[node name="ScoreLabel" type="Label" parent="CanvasLayer"]
+offset_left = 1057.0
+offset_top = 24.0
+offset_right = 1097.0
+offset_bottom = 68.0
+theme_override_font_sizes/font_size = 31
+text = "0"
+
 [connection signal="body_entered" from="SlimeGrinder" to="." method="_on_slime_detector_body_entered"]
 [connection signal="body_entered" from="SlimeGrinder" to="SlimeGrinder" method="_on_body_entered"]

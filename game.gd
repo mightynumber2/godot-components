@@ -1,5 +1,6 @@
 extends Node
 
+@onready var score_label: Label = $CanvasLayer/ScoreLabel
 @onready var slime_through_label: Label = $CanvasLayer/SlimeThroughLabel
 @export var maximum_units_through: int = 5
 

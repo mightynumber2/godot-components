@@ -20,7 +20,6 @@ func _on_timer_timeout():
 func take_damage(damage: float):
 	health -= damage
 	health_bar.value = health
-	print(damage)
 	
 	if health <= 0:
 		queue_free()
