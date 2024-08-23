@@ -1,49 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://no3q2i4hm5o"]
+[gd_scene load_steps=7 format=3 uid="uid://no3q2i4hm5o"]
 
+[ext_resource type="PackedScene" uid="uid://do6lijxr06r8i" path="res://knight.tscn" id="1_2kc47"]
 [ext_resource type="PackedScene" uid="uid://c23387n70yud4" path="res://slime.tscn" id="3_da0t2"]
-[ext_resource type="Script" path="res://knight.gd" id="3_egjm8"]
-[ext_resource type="Texture2D" uid="uid://liok05avh2gq" path="res://assets/sprites/knight.png" id="3_wi6so"]
 [ext_resource type="Script" path="res://spawner.gd" id="4_v4rab"]
 [ext_resource type="PackedScene" uid="uid://hovgr0kv2y2m" path="res://projectile.tscn" id="5_cdsfl"]
 [ext_resource type="PackedScene" uid="uid://b6had6ijlaies" path="res://big_slime.tscn" id="5_sc0do"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_jeh55"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3xml5"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u5vh5"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_je3sh"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rqkf0"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_u5goc"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3xml5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u5vh5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_je3sh")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rqkf0")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
 
 [node name="Main" type="Node"]
 
@@ -53,20 +16,7 @@ position = Vector2(576.75, 324.75)
 scale = Vector2(1220.5, 712.5)
 texture = SubResource("CanvasTexture_jeh55")
 
-[node name="Knight" type="Sprite2D" parent="."]
-position = Vector2(69, 387)
-script = ExtResource("3_egjm8")
-metadata/_edit_group_ = true
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Knight"]
-position = Vector2(1, -73)
-scale = Vector2(8.4375, 8.4375)
-sprite_frames = SubResource("SpriteFrames_u5goc")
-autoplay = "default"
-frame_progress = 0.0135433
-
-[node name="Timer" type="Timer" parent="Knight"]
-unique_name_in_owner = true
+[node name="Knight" parent="." instance=ExtResource("1_2kc47")]
 
 [node name="Slime" parent="." instance=ExtResource("3_da0t2")]
 position = Vector2(1077, 301)
