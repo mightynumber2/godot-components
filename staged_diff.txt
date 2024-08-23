@@ -1,0 +1,90 @@
+diff --git a/game.gd b/game.gd
+new file mode 100644
+index 0000000..0af2102
+--- /dev/null
++++ b/game.gd
+@@ -0,0 +1,11 @@
++extends Node
++
++@onready var slime_through_label: Label = $CanvasLayer/SlimeThroughLabel
++@export var maximum_units_through: int = 5
++
++func _ready() -> void:
++	slime_through_label.text = str(maximum_units_through)
++
++func _on_slime_detector_body_entered(body: Node2D) -> void:
++	maximum_units_through -= 1
++	slime_through_label.text = str(maximum_units_through)
+diff --git a/main.tscn b/main.tscn
+index 696538c..fc40f21 100644
+--- a/main.tscn
++++ b/main.tscn
+@@ -1,14 +1,20 @@
+-[gd_scene load_steps=7 format=3 uid="uid://no3q2i4hm5o"]
++[gd_scene load_steps=10 format=3 uid="uid://no3q2i4hm5o"]
+ 
+ [ext_resource type="PackedScene" uid="uid://do6lijxr06r8i" path="res://knight.tscn" id="1_2kc47"]
++[ext_resource type="Script" path="res://game.gd" id="1_gnwn7"]
+ [ext_resource type="PackedScene" uid="uid://c23387n70yud4" path="res://slime.tscn" id="3_da0t2"]
+ [ext_resource type="Script" path="res://spawner.gd" id="4_v4rab"]
+ [ext_resource type="PackedScene" uid="uid://hovgr0kv2y2m" path="res://projectile.tscn" id="5_cdsfl"]
+ [ext_resource type="PackedScene" uid="uid://b6had6ijlaies" path="res://big_slime.tscn" id="5_sc0do"]
++[ext_resource type="Script" path="res://slime_grinder.gd" id="7_3f2hk"]
+ 
+ [sub_resource type="CanvasTexture" id="CanvasTexture_jeh55"]
+ 
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_yna1i"]
++size = Vector2(239, 663)
++
+ [node name="Main" type="Node"]
++script = ExtResource("1_gnwn7")
+ 
+ [node name="BG" type="Sprite2D" parent="."]
+ modulate = Color(0.054902, 0.027451, 0.164706, 1)
+@@ -19,8 +25,8 @@ texture = SubResource("CanvasTexture_jeh55")
+ [node name="Knight" parent="." instance=ExtResource("1_2kc47")]
+ position = Vector2(69, 362)
+ 
+-[node name="Slime" parent="." instance=ExtResource("3_da0t2")]
+-position = Vector2(1077, 301)
++[node name="TestSlime" parent="." instance=ExtResource("3_da0t2")]
++position = Vector2(550, 92)
+ 
+ [node name="Spawner" type="Marker2D" parent="."]
+ position = Vector2(1325, 336)
+@@ -29,3 +35,24 @@ items = Array[PackedScene]([ExtResource("3_da0t2"), ExtResource("5_sc0do")])
+ 
+ [node name="Projectile" parent="." instance=ExtResource("5_cdsfl")]
+ position = Vector2(833, 344)
++
++[node name="SlimeGrinder" type="Area2D" parent="."]
++script = ExtResource("7_3f2hk")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="SlimeGrinder"]
++position = Vector2(-206, 323)
++shape = SubResource("RectangleShape2D_yna1i")
++
++[node name="CanvasLayer" type="CanvasLayer" parent="."]
++
++[node name="SlimeThroughLabel" type="Label" parent="CanvasLayer"]
++unique_name_in_owner = true
++offset_left = 69.0
++offset_top = 27.0
++offset_right = 193.0
++offset_bottom = 86.0
++theme_override_font_sizes/font_size = 31
++text = "0"
++
++[connection signal="body_entered" from="SlimeGrinder" to="." method="_on_slime_detector_body_entered"]
++[connection signal="body_entered" from="SlimeGrinder" to="SlimeGrinder" method="_on_body_entered"]
+diff --git a/slime_grinder.gd b/slime_grinder.gd
+new file mode 100644
+index 0000000..9986568
+--- /dev/null
++++ b/slime_grinder.gd
+@@ -0,0 +1,5 @@
++extends Area2D
++
++
++func _on_body_entered(body: Node2D) -> void:
++	body.queue_free()
