@@ -142,5 +142,3 @@ frame_progress = 0.0135433
 
 [node name="Timer" type="Timer" parent="Knight"]
 unique_name_in_owner = true
-
-[connection signal="timeout" from="Knight/Timer" to="Knight" method="_on_timer_timeout"]
