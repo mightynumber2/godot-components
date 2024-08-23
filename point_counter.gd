@@ -1,4 +1,6 @@
 extends Node
 
+signal point_counted()
+
 func count_point():
-	print("Counting points!")
+	point_counted.emit()

@@ -1,82 +1,33 @@
 diff --git a/game.gd b/game.gd
-index 0af2102..f411054 100644
+index f411054..07cfd21 100644
 --- a/game.gd
 +++ b/game.gd
-@@ -1,5 +1,6 @@
- extends Node
- 
-+@onready var score_label: Label = $CanvasLayer/ScoreLabel
+@@ -4,9 +4,16 @@ extends Node
  @onready var slime_through_label: Label = $CanvasLayer/SlimeThroughLabel
  @export var maximum_units_through: int = 5
  
-diff --git a/knight.gd b/knight.gd
-index 1eb26f5..6a44df2 100644
---- a/knight.gd
-+++ b/knight.gd
-@@ -20,7 +20,6 @@ func _on_timer_timeout():
- func take_damage(damage: float):
- 	health -= damage
- 	health_bar.value = health
--	print(damage)
- 	
- 	if health <= 0:
- 		queue_free()
-diff --git a/main.tscn b/main.tscn
-index fc40f21..bc3ddf1 100644
---- a/main.tscn
-+++ b/main.tscn
-@@ -54,5 +54,13 @@ offset_bottom = 86.0
- theme_override_font_sizes/font_size = 31
- text = "0"
- 
-+[node name="ScoreLabel" type="Label" parent="CanvasLayer"]
-+offset_left = 1057.0
-+offset_top = 24.0
-+offset_right = 1097.0
-+offset_bottom = 68.0
-+theme_override_font_sizes/font_size = 31
-+text = "0"
++var points: int = 0
 +
- [connection signal="body_entered" from="SlimeGrinder" to="." method="_on_slime_detector_body_entered"]
- [connection signal="body_entered" from="SlimeGrinder" to="SlimeGrinder" method="_on_body_entered"]
+ func _ready() -> void:
+ 	slime_through_label.text = str(maximum_units_through)
++	PointCounter.point_counted.connect(_on_slime_died)
+ 
+ func _on_slime_detector_body_entered(body: Node2D) -> void:
+ 	maximum_units_through -= 1
+ 	slime_through_label.text = str(maximum_units_through)
++
++func _on_slime_died():
++	points += 1
++	score_label.text = str(points)
 diff --git a/point_counter.gd b/point_counter.gd
-new file mode 100644
-index 0000000..df08e51
---- /dev/null
+index df08e51..fe890af 100644
+--- a/point_counter.gd
 +++ b/point_counter.gd
-@@ -0,0 +1,4 @@
-+extends Node
-+
-+func count_point():
-+	print("Counting points!")
-diff --git a/project.godot b/project.godot
-index 466881f..086b0a8 100644
---- a/project.godot
-+++ b/project.godot
-@@ -14,3 +14,7 @@ config/name="Godot Components"
- run/main_scene="res://main.tscn"
- config/features=PackedStringArray("4.3", "Forward Plus")
- config/icon="res://icon.svg"
-+
-+[autoload]
-+
-+PointCounter="*res://point_counter.gd"
-diff --git a/slime.gd b/slime.gd
-index e47b939..144262d 100644
---- a/slime.gd
-+++ b/slime.gd
-@@ -21,12 +21,13 @@ func _physics_process(delta: float) -> void:
- 		
- 		if collider.has_method("take_damage"):
- 			collider.take_damage(impact_damage)
-+			PointCounter.count_point()
- 			queue_free()
+@@ -1,4 +1,6 @@
+ extends Node
  
- func take_damage(damage: float):
- 	health -= damage
- 	health_bar.value = health
--	print(damage)
- 	
- 	if health <= 0:
-+		PointCounter.count_point()
- 		queue_free()
++signal point_counted()
++
+ func count_point():
+-	print("Counting points!")
++	point_counted.emit()
