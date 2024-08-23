@@ -17,6 +17,7 @@ scale = Vector2(1220.5, 712.5)
 texture = SubResource("CanvasTexture_jeh55")
 
 [node name="Knight" parent="." instance=ExtResource("1_2kc47")]
+position = Vector2(69, 362)
 
 [node name="Slime" parent="." instance=ExtResource("3_da0t2")]
 position = Vector2(1077, 301)

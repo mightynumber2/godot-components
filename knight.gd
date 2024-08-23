@@ -16,3 +16,11 @@ func _on_timer_timeout():
 	var projectile_scene = preload("res://projectile.tscn")
 	var new_projectile = projectile_scene.instantiate()
 	add_child(new_projectile)
+	
+func take_damage(damage: float):
+	health -= damage
+	health_bar.value = health
+	print(damage)
+	
+	if health <= 0:
+		queue_free()

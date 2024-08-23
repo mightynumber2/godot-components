@@ -2,12 +2,13 @@ extends CharacterBody2D
 
 @export var speed: float = 200
 @export var health: float = 100
+@export var impact_damage: float = 50
 
-@onready var progress_bar: ProgressBar = $ProgressBar
+@onready var health_bar: ProgressBar = $ProgressBar
 
 func _ready() -> void:
-	progress_bar.max_value = health
-	progress_bar.value = health
+	health_bar.max_value = health
+	health_bar.value = health
 
 func _physics_process(delta: float) -> void:
 	velocity = Vector2(-speed, 0)
@@ -17,10 +18,14 @@ func _physics_process(delta: float) -> void:
 	for i in collision_count:
 		var collision_info = get_slide_collision(i)
 		var collider = collision_info.get_collider()
+		
+		if collider.has_method("take_damage"):
+			collider.take_damage(impact_damage)
+			queue_free()
 
 func take_damage(damage: float):
 	health -= damage
-	progress_bar.value = health
+	health_bar.value = health
 	print(damage)
 	
 	if health <= 0:

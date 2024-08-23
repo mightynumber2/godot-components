@@ -70,8 +70,8 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hgbwr"]
 size = Vector2(69, 75)
 
-[node name="Slime" type="CharacterBody2D"]
-collision_mask = 0
+[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
+collision_mask = 2
 script = ExtResource("1_tsb1d")
 metadata/_edit_group_ = true
 
