@@ -1,8 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://no3q2i4hm5o"]
+[gd_scene load_steps=13 format=3 uid="uid://no3q2i4hm5o"]
 
 [ext_resource type="PackedScene" uid="uid://c23387n70yud4" path="res://slime.tscn" id="3_da0t2"]
 [ext_resource type="Script" path="res://knight.gd" id="3_egjm8"]
 [ext_resource type="Texture2D" uid="uid://liok05avh2gq" path="res://assets/sprites/knight.png" id="3_wi6so"]
+[ext_resource type="Script" path="res://spawner.gd" id="4_v4rab"]
+[ext_resource type="PackedScene" uid="uid://hovgr0kv2y2m" path="res://projectile.tscn" id="5_cdsfl"]
+[ext_resource type="PackedScene" uid="uid://b6had6ijlaies" path="res://big_slime.tscn" id="5_sc0do"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_jeh55"]
 
@@ -67,3 +70,11 @@ unique_name_in_owner = true
 
 [node name="Slime" parent="." instance=ExtResource("3_da0t2")]
 position = Vector2(1077, 301)
+
+[node name="Spawner" type="Marker2D" parent="."]
+position = Vector2(1325, 336)
+script = ExtResource("4_v4rab")
+items = Array[PackedScene]([ExtResource("3_da0t2"), ExtResource("5_sc0do")])
+
+[node name="Projectile" parent="." instance=ExtResource("5_cdsfl")]
+position = Vector2(833, 344)
