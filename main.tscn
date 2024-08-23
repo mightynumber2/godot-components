@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://no3q2i4hm5o"]
+[gd_scene load_steps=21 format=3 uid="uid://no3q2i4hm5o"]
 
 [ext_resource type="Texture2D" uid="uid://blepkmsftxx6a" path="res://assets/sprites/slime_purple.png" id="1_nqnhd"]
 [ext_resource type="Script" path="res://slime.gd" id="1_tguxy"]
@@ -6,6 +6,42 @@
 [ext_resource type="Texture2D" uid="uid://liok05avh2gq" path="res://assets/sprites/knight.png" id="3_wi6so"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_jeh55"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3xml5"]
+atlas = ExtResource("3_wi6so")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u5vh5"]
+atlas = ExtResource("3_wi6so")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_je3sh"]
+atlas = ExtResource("3_wi6so")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rqkf0"]
+atlas = ExtResource("3_wi6so")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_u5goc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3xml5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u5vh5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_je3sh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rqkf0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_thy3k"]
 atlas = ExtResource("1_nqnhd")
@@ -71,41 +107,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3xml5"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u5vh5"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_je3sh"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rqkf0"]
-atlas = ExtResource("3_wi6so")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_u5goc"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3xml5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_u5vh5")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_je3sh")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_rqkf0")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hgbwr"]
+size = Vector2(69, 75)
 
 [node name="Main" type="Node"]
 
@@ -115,21 +118,8 @@ position = Vector2(576.75, 324.75)
 scale = Vector2(1220.5, 712.5)
 texture = SubResource("CanvasTexture_jeh55")
 
-[node name="Slime" type="Sprite2D" parent="."]
-position = Vector2(872, 301)
-script = ExtResource("1_tguxy")
-metadata/_edit_group_ = true
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Slime"]
-position = Vector2(1, 2)
-scale = Vector2(8.20833, 8.20833)
-sprite_frames = SubResource("SpriteFrames_q73qu")
-autoplay = "default"
-frame_progress = 0.226217
-flip_h = true
-
 [node name="Knight" type="Sprite2D" parent="."]
-position = Vector2(179, 369)
+position = Vector2(120, 372)
 script = ExtResource("3_egjm8")
 metadata/_edit_group_ = true
 
@@ -142,3 +132,23 @@ frame_progress = 0.0135433
 
 [node name="Timer" type="Timer" parent="Knight"]
 unique_name_in_owner = true
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(1063, 303)
+script = ExtResource("1_tguxy")
+metadata/_edit_group_ = true
+
+[node name="Slime" type="Sprite2D" parent="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D/Slime"]
+position = Vector2(1, 2)
+scale = Vector2(8.20833, 8.20833)
+sprite_frames = SubResource("SpriteFrames_q73qu")
+autoplay = "default"
+frame = 6
+frame_progress = 0.626568
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+position = Vector2(-1.5, 51.5)
+shape = SubResource("RectangleShape2D_hgbwr")
