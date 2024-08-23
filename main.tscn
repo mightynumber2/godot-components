@@ -1,11 +1,9 @@
-[gd_scene load_steps=24 format=3 uid="uid://no3q2i4hm5o"]
+[gd_scene load_steps=20 format=3 uid="uid://no3q2i4hm5o"]
 
 [ext_resource type="Texture2D" uid="uid://blepkmsftxx6a" path="res://assets/sprites/slime_purple.png" id="1_nqnhd"]
 [ext_resource type="Script" path="res://slime.gd" id="1_tguxy"]
 [ext_resource type="Script" path="res://knight.gd" id="3_egjm8"]
-[ext_resource type="Script" path="res://projectile.gd" id="3_rggl7"]
 [ext_resource type="Texture2D" uid="uid://liok05avh2gq" path="res://assets/sprites/knight.png" id="3_wi6so"]
-[ext_resource type="Texture2D" uid="uid://cu5mkhbv1udj4" path="res://assets/sprites/platforms.png" id="4_bdio0"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_jeh55"]
 
@@ -73,21 +71,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_5jfkj"]
-atlas = ExtResource("4_bdio0")
-region = Rect2(0, 32, 16, 16)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_gymdx"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5jfkj")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_3xml5"]
 atlas = ExtResource("3_wi6so")
 region = Rect2(0, 0, 32, 32)
@@ -145,23 +128,19 @@ autoplay = "default"
 frame_progress = 0.226217
 flip_h = true
 
-[node name="Projectile" type="Sprite2D" parent="."]
-position = Vector2(148, 341)
-script = ExtResource("3_rggl7")
-metadata/_edit_group_ = true
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Projectile"]
-scale = Vector2(5.59375, 5.59375)
-sprite_frames = SubResource("SpriteFrames_gymdx")
-
 [node name="Knight" type="Sprite2D" parent="."]
-position = Vector2(151, 276)
+position = Vector2(179, 369)
 script = ExtResource("3_egjm8")
 metadata/_edit_group_ = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Knight"]
-position = Vector2(-1, -1)
+position = Vector2(1, -73)
 scale = Vector2(8.4375, 8.4375)
 sprite_frames = SubResource("SpriteFrames_u5goc")
 autoplay = "default"
 frame_progress = 0.0135433
+
+[node name="Timer" type="Timer" parent="Knight"]
+unique_name_in_owner = true
+
+[connection signal="timeout" from="Knight/Timer" to="Knight" method="_on_timer_timeout"]

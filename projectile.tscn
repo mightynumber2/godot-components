@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://hovgr0kv2y2m"]
+
+[ext_resource type="Script" path="res://projectile.gd" id="1_ir7kn"]
+[ext_resource type="Texture2D" uid="uid://cu5mkhbv1udj4" path="res://assets/sprites/platforms.png" id="2_urhka"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5jfkj"]
+atlas = ExtResource("2_urhka")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gymdx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5jfkj")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Projectile" type="Sprite2D"]
+script = ExtResource("1_ir7kn")
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(5.59375, 5.59375)
+sprite_frames = SubResource("SpriteFrames_gymdx")
