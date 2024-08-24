@@ -8,7 +8,6 @@ var points: int = 0
 
 func _ready() -> void:
 	slime_through_label.text = str(maximum_units_through)
-	PointCounter.point_counted.connect(_on_slime_died)
 
 func _on_slime_detector_body_entered(body: Node2D) -> void:
 	maximum_units_through -= 1

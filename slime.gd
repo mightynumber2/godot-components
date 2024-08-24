@@ -6,6 +6,8 @@ extends CharacterBody2D
 
 @onready var health_bar: ProgressBar = $ProgressBar
 
+signal died()
+
 func _ready() -> void:
 	health_bar.max_value = health
 	health_bar.value = health
@@ -21,7 +23,7 @@ func _physics_process(delta: float) -> void:
 		
 		if collider.has_method("take_damage"):
 			collider.take_damage(impact_damage)
-			PointCounter.count_point()
+			died.emit()
 			queue_free()
 
 func take_damage(damage: float):
@@ -29,5 +31,5 @@ func take_damage(damage: float):
 	health_bar.value = health
 	
 	if health <= 0:
-		PointCounter.count_point()
+		died.emit()
 		queue_free()
