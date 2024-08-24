@@ -1,145 +1,157 @@
 diff --git a/big_slime.tscn b/big_slime.tscn
-index f252dd6..f2f3ca2 100644
+index f2f3ca2..f252dd6 100644
 --- a/big_slime.tscn
 +++ b/big_slime.tscn
 @@ -70,7 +70,7 @@ animations = [{
  [sub_resource type="RectangleShape2D" id="RectangleShape2D_hgbwr"]
  size = Vector2(112, 142)
  
--[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
-+[node name="Slime" type="CharacterBody2D" groups=["destroyed_on_game_over", "enemy"]]
+-[node name="Slime" type="CharacterBody2D" groups=["destroyed_on_game_over", "enemy"]]
++[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
  collision_mask = 2
  script = ExtResource("1_1nq6c")
  speed = 100.0
 diff --git a/game.gd b/game.gd
-index e6fd82d..87648af 100644
+index 87648af..17adc87 100644
 --- a/game.gd
 +++ b/game.gd
-@@ -2,7 +2,10 @@ extends Node
- 
- @onready var score_label: Label = $CanvasLayer/ScoreLabel
- @onready var slime_through_label: Label = $CanvasLayer/SlimeThroughLabel
--@export var maximum_units_through: int = 5
-+@onready var game_over_label: Label = $CanvasLayer/GameOverLabel
-+
-+@export var maximum_units_through: int = 2
-+
- 
- var points: int = 0
- 
-@@ -12,6 +15,12 @@ func _ready() -> void:
- func _on_slime_detector_body_entered(body: Node2D) -> void:
- 	maximum_units_through -= 1
- 	slime_through_label.text = str(maximum_units_through)
-+	
-+	if maximum_units_through <= 0:
-+		game_over_label.visible = true
-+		var to_destroy = get_tree().get_nodes_in_group("destroyed_on_game_over")
-+		for item in to_destroy:
-+			item.queue_free()
+@@ -18,9 +18,7 @@ func _on_slime_detector_body_entered(body: Node2D) -> void:
+ 	
+ 	if maximum_units_through <= 0:
+ 		game_over_label.visible = true
+-		var to_destroy = get_tree().get_nodes_in_group("destroyed_on_game_over")
+-		for item in to_destroy:
+-			item.queue_free()
++		propagate_call("on_game_over")
  
  func _on_slime_died():
  	points += 1
+diff --git a/knight.gd b/knight.gd
+index 6a44df2..0ba2805 100644
+--- a/knight.gd
++++ b/knight.gd
+@@ -1,8 +1,10 @@
+ extends StaticBody2D
+ 
+ @onready var timer: Timer = %Timer
+-@export var health = 500
+ @onready var health_bar: ProgressBar = %HealthBar
++@export var health = 500
++@export var parent_of_projectiles: NodePath
++
+ 
+ 
+ func _ready() -> void:
+@@ -15,7 +17,15 @@ func _ready() -> void:
+ func _on_timer_timeout():
+ 	var projectile_scene = preload("res://projectile.tscn")
+ 	var new_projectile = projectile_scene.instantiate()
+-	add_child(new_projectile)
++	
++	new_projectile.global_position = global_position
++	
++	var parent = get_node(parent_of_projectiles)
++	parent.add_child(new_projectile)
++	
++	
++func on_game_over():
++	queue_free()
+ 	
+ func take_damage(damage: float):
+ 	health -= damage
 diff --git a/knight.tscn b/knight.tscn
-index b1dc43f..55fbf78 100644
+index 55fbf78..4b28fc8 100644
 --- a/knight.tscn
 +++ b/knight.tscn
 @@ -42,7 +42,7 @@ animations = [{
  [sub_resource type="RectangleShape2D" id="RectangleShape2D_e5e17"]
  size = Vector2(73, 126)
  
--[node name="Knight" type="StaticBody2D" groups=["friend"]]
-+[node name="Knight" type="StaticBody2D" groups=["destroyed_on_game_over", "friend"]]
+-[node name="Knight" type="StaticBody2D" groups=["destroyed_on_game_over", "friend"]]
++[node name="Knight" type="StaticBody2D" groups=["friend"]]
  collision_layer = 2
  collision_mask = 2
  script = ExtResource("1_t45g7")
-@@ -55,7 +55,7 @@ sprite_frames = SubResource("SpriteFrames_u5goc")
- autoplay = "default"
- frame_progress = 0.0135433
- 
--[node name="Timer" type="Timer" parent="."]
-+[node name="Timer" type="Timer" parent="." groups=["friend"]]
- unique_name_in_owner = true
- 
- [node name="HealthBar" type="ProgressBar" parent="."]
 diff --git a/main.tscn b/main.tscn
-index 936c865..ff2a581 100644
+index ff2a581..6da0b22 100644
 --- a/main.tscn
 +++ b/main.tscn
-@@ -28,7 +28,10 @@ position = Vector2(69, 362)
+@@ -24,6 +24,7 @@ texture = SubResource("CanvasTexture_jeh55")
+ 
+ [node name="Knight" parent="." instance=ExtResource("1_2kc47")]
+ position = Vector2(69, 362)
++parent_of_projectiles = NodePath("..")
+ 
  [node name="TestSlime" parent="." instance=ExtResource("3_da0t2")]
  position = Vector2(550, 92)
+@@ -31,7 +32,7 @@ position = Vector2(550, 92)
+ [node name="TestSlime2" parent="." instance=ExtResource("3_da0t2")]
+ position = Vector2(356, 93)
  
--[node name="Spawner" type="Marker2D" parent="."]
-+[node name="TestSlime2" parent="." instance=ExtResource("3_da0t2")]
-+position = Vector2(356, 93)
-+
-+[node name="Spawner" type="Marker2D" parent="." groups=["destroyed_on_game_over"]]
+-[node name="Spawner" type="Marker2D" parent="." groups=["destroyed_on_game_over"]]
++[node name="Spawner" type="Marker2D" parent="."]
  position = Vector2(1325, 336)
  script = ExtResource("4_v4rab")
  items = Array[PackedScene]([ExtResource("3_da0t2"), ExtResource("5_sc0do")])
-@@ -62,6 +65,24 @@ offset_bottom = 68.0
- theme_override_font_sizes/font_size = 31
- text = "0"
- 
-+[node name="GameOverLabel" type="Label" parent="CanvasLayer"]
-+visible = false
-+anchors_preset = 8
-+anchor_left = 0.5
-+anchor_top = 0.5
-+anchor_right = 0.5
-+anchor_bottom = 0.5
-+offset_left = -164.5
-+offset_top = -93.0
-+offset_right = 164.5
-+offset_bottom = 93.0
-+grow_horizontal = 2
-+grow_vertical = 2
-+theme_override_font_sizes/font_size = 46
-+text = "Game Over!"
-+horizontal_alignment = 1
-+vertical_alignment = 1
-+
- [connection signal="fish_died" from="Spawner" to="." method="_on_slime_died"]
- [connection signal="body_entered" from="SlimeGrinder" to="." method="_on_slime_detector_body_entered"]
- [connection signal="body_entered" from="SlimeGrinder" to="SlimeGrinder" method="_on_body_entered"]
 diff --git a/project.godot b/project.godot
-index 466881f..002229a 100644
+index 002229a..7974616 100644
 --- a/project.godot
 +++ b/project.godot
-@@ -14,3 +14,9 @@ config/name="Godot Components"
- run/main_scene="res://main.tscn"
- config/features=PackedStringArray("4.3", "Forward Plus")
- config/icon="res://icon.svg"
-+
-+[global_group]
-+
-+destroyed_on_game_over=""
-+enemy=""
-+friend=""
+@@ -17,6 +17,5 @@ config/icon="res://icon.svg"
+ 
+ [global_group]
+ 
+-destroyed_on_game_over=""
+ enemy=""
+ friend=""
 diff --git a/projectile.tscn b/projectile.tscn
-index a2625de..5b08e4b 100644
+index 5b08e4b..a2625de 100644
 --- a/projectile.tscn
 +++ b/projectile.tscn
 @@ -21,7 +21,7 @@ animations = [{
  [sub_resource type="RectangleShape2D" id="RectangleShape2D_vrnfv"]
  size = Vector2(85, 48)
  
--[node name="Projectile" type="Sprite2D"]
-+[node name="Projectile" type="Sprite2D" groups=["destroyed_on_game_over"]]
+-[node name="Projectile" type="Sprite2D" groups=["destroyed_on_game_over"]]
++[node name="Projectile" type="Sprite2D"]
  script = ExtResource("1_ir7kn")
  metadata/_edit_group_ = true
  
+diff --git a/slime.gd b/slime.gd
+index 300caef..70ac2c2 100644
+--- a/slime.gd
++++ b/slime.gd
+@@ -25,6 +25,9 @@ func _physics_process(delta: float) -> void:
+ 			collider.take_damage(impact_damage)
+ 			died.emit()
+ 			queue_free()
++			
++func on_game_over():
++	queue_free()
+ 
+ func take_damage(damage: float):
+ 	health -= damage
 diff --git a/slime.tscn b/slime.tscn
-index 4d2acd7..ffa1c02 100644
+index ffa1c02..4d2acd7 100644
 --- a/slime.tscn
 +++ b/slime.tscn
 @@ -70,7 +70,7 @@ animations = [{
  [sub_resource type="RectangleShape2D" id="RectangleShape2D_hgbwr"]
  size = Vector2(69, 75)
  
--[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
-+[node name="Slime" type="CharacterBody2D" groups=["destroyed_on_game_over", "enemy"]]
+-[node name="Slime" type="CharacterBody2D" groups=["destroyed_on_game_over", "enemy"]]
++[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
  collision_mask = 2
  script = ExtResource("1_tsb1d")
  metadata/_edit_group_ = true
+diff --git a/spawner.gd b/spawner.gd
+index ba401c5..0e0ece5 100644
+--- a/spawner.gd
++++ b/spawner.gd
+@@ -21,3 +21,6 @@ func spawn_something():
+ 	
+ func on_fish_died():
+ 	fish_died.emit()
++	
++func on_game_over():
++	queue_free()

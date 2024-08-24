@@ -1,8 +1,10 @@
 extends StaticBody2D
 
 @onready var timer: Timer = %Timer
-@export var health = 500
 @onready var health_bar: ProgressBar = %HealthBar
+@export var health = 500
+@export var parent_of_projectiles: NodePath
+
 
 
 func _ready() -> void:
@@ -15,7 +17,15 @@ func _ready() -> void:
 func _on_timer_timeout():
 	var projectile_scene = preload("res://projectile.tscn")
 	var new_projectile = projectile_scene.instantiate()
-	add_child(new_projectile)
+	
+	new_projectile.global_position = global_position
+	
+	var parent = get_node(parent_of_projectiles)
+	parent.add_child(new_projectile)
+	
+	
+func on_game_over():
+	queue_free()
 	
 func take_damage(damage: float):
 	health -= damage

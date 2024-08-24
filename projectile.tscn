@@ -21,7 +21,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vrnfv"]
 size = Vector2(85, 48)
 
-[node name="Projectile" type="Sprite2D" groups=["destroyed_on_game_over"]]
+[node name="Projectile" type="Sprite2D"]
 script = ExtResource("1_ir7kn")
 metadata/_edit_group_ = true
 

@@ -24,6 +24,7 @@ texture = SubResource("CanvasTexture_jeh55")
 
 [node name="Knight" parent="." instance=ExtResource("1_2kc47")]
 position = Vector2(69, 362)
+parent_of_projectiles = NodePath("..")
 
 [node name="TestSlime" parent="." instance=ExtResource("3_da0t2")]
 position = Vector2(550, 92)
@@ -31,7 +32,7 @@ position = Vector2(550, 92)
 [node name="TestSlime2" parent="." instance=ExtResource("3_da0t2")]
 position = Vector2(356, 93)
 
-[node name="Spawner" type="Marker2D" parent="." groups=["destroyed_on_game_over"]]
+[node name="Spawner" type="Marker2D" parent="."]
 position = Vector2(1325, 336)
 script = ExtResource("4_v4rab")
 items = Array[PackedScene]([ExtResource("3_da0t2"), ExtResource("5_sc0do")])

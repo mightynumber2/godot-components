@@ -18,9 +18,7 @@ func _on_slime_detector_body_entered(body: Node2D) -> void:
 	
 	if maximum_units_through <= 0:
 		game_over_label.visible = true
-		var to_destroy = get_tree().get_nodes_in_group("destroyed_on_game_over")
-		for item in to_destroy:
-			item.queue_free()
+		propagate_call("on_game_over")
 
 func _on_slime_died():
 	points += 1

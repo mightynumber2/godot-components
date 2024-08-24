@@ -17,6 +17,5 @@ config/icon="res://icon.svg"
 
 [global_group]
 
-destroyed_on_game_over=""
 enemy=""
 friend=""

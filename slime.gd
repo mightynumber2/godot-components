@@ -25,6 +25,9 @@ func _physics_process(delta: float) -> void:
 			collider.take_damage(impact_damage)
 			died.emit()
 			queue_free()
+			
+func on_game_over():
+	queue_free()
 
 func take_damage(damage: float):
 	health -= damage
