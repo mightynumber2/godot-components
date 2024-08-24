@@ -14,3 +14,9 @@ config/name="Godot Components"
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[global_group]
+
+destroyed_on_game_over=""
+enemy=""
+friend=""

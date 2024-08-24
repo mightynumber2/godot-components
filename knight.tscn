@@ -42,7 +42,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e5e17"]
 size = Vector2(73, 126)
 
-[node name="Knight" type="StaticBody2D" groups=["friend"]]
+[node name="Knight" type="StaticBody2D" groups=["destroyed_on_game_over", "friend"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_t45g7")
@@ -55,7 +55,7 @@ sprite_frames = SubResource("SpriteFrames_u5goc")
 autoplay = "default"
 frame_progress = 0.0135433
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." groups=["friend"]]
 unique_name_in_owner = true
 
 [node name="HealthBar" type="ProgressBar" parent="."]

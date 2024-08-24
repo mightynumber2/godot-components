@@ -1,126 +1,145 @@
+diff --git a/big_slime.tscn b/big_slime.tscn
+index f252dd6..f2f3ca2 100644
+--- a/big_slime.tscn
++++ b/big_slime.tscn
+@@ -70,7 +70,7 @@ animations = [{
+ [sub_resource type="RectangleShape2D" id="RectangleShape2D_hgbwr"]
+ size = Vector2(112, 142)
+ 
+-[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
++[node name="Slime" type="CharacterBody2D" groups=["destroyed_on_game_over", "enemy"]]
+ collision_mask = 2
+ script = ExtResource("1_1nq6c")
+ speed = 100.0
 diff --git a/game.gd b/game.gd
-index 07cfd21..e6fd82d 100644
+index e6fd82d..87648af 100644
 --- a/game.gd
 +++ b/game.gd
-@@ -8,7 +8,6 @@ var points: int = 0
+@@ -2,7 +2,10 @@ extends Node
  
- func _ready() -> void:
- 	slime_through_label.text = str(maximum_units_through)
--	PointCounter.point_counted.connect(_on_slime_died)
+ @onready var score_label: Label = $CanvasLayer/ScoreLabel
+ @onready var slime_through_label: Label = $CanvasLayer/SlimeThroughLabel
+-@export var maximum_units_through: int = 5
++@onready var game_over_label: Label = $CanvasLayer/GameOverLabel
++
++@export var maximum_units_through: int = 2
++
  
+ var points: int = 0
+ 
+@@ -12,6 +15,12 @@ func _ready() -> void:
  func _on_slime_detector_body_entered(body: Node2D) -> void:
  	maximum_units_through -= 1
+ 	slime_through_label.text = str(maximum_units_through)
++	
++	if maximum_units_through <= 0:
++		game_over_label.visible = true
++		var to_destroy = get_tree().get_nodes_in_group("destroyed_on_game_over")
++		for item in to_destroy:
++			item.queue_free()
+ 
+ func _on_slime_died():
+ 	points += 1
+diff --git a/knight.tscn b/knight.tscn
+index b1dc43f..55fbf78 100644
+--- a/knight.tscn
++++ b/knight.tscn
+@@ -42,7 +42,7 @@ animations = [{
+ [sub_resource type="RectangleShape2D" id="RectangleShape2D_e5e17"]
+ size = Vector2(73, 126)
+ 
+-[node name="Knight" type="StaticBody2D" groups=["friend"]]
++[node name="Knight" type="StaticBody2D" groups=["destroyed_on_game_over", "friend"]]
+ collision_layer = 2
+ collision_mask = 2
+ script = ExtResource("1_t45g7")
+@@ -55,7 +55,7 @@ sprite_frames = SubResource("SpriteFrames_u5goc")
+ autoplay = "default"
+ frame_progress = 0.0135433
+ 
+-[node name="Timer" type="Timer" parent="."]
++[node name="Timer" type="Timer" parent="." groups=["friend"]]
+ unique_name_in_owner = true
+ 
+ [node name="HealthBar" type="ProgressBar" parent="."]
 diff --git a/main.tscn b/main.tscn
-index bc3ddf1..936c865 100644
+index 936c865..ff2a581 100644
 --- a/main.tscn
 +++ b/main.tscn
-@@ -62,5 +62,6 @@ offset_bottom = 68.0
+@@ -28,7 +28,10 @@ position = Vector2(69, 362)
+ [node name="TestSlime" parent="." instance=ExtResource("3_da0t2")]
+ position = Vector2(550, 92)
+ 
+-[node name="Spawner" type="Marker2D" parent="."]
++[node name="TestSlime2" parent="." instance=ExtResource("3_da0t2")]
++position = Vector2(356, 93)
++
++[node name="Spawner" type="Marker2D" parent="." groups=["destroyed_on_game_over"]]
+ position = Vector2(1325, 336)
+ script = ExtResource("4_v4rab")
+ items = Array[PackedScene]([ExtResource("3_da0t2"), ExtResource("5_sc0do")])
+@@ -62,6 +65,24 @@ offset_bottom = 68.0
  theme_override_font_sizes/font_size = 31
  text = "0"
  
-+[connection signal="fish_died" from="Spawner" to="." method="_on_slime_died"]
++[node name="GameOverLabel" type="Label" parent="CanvasLayer"]
++visible = false
++anchors_preset = 8
++anchor_left = 0.5
++anchor_top = 0.5
++anchor_right = 0.5
++anchor_bottom = 0.5
++offset_left = -164.5
++offset_top = -93.0
++offset_right = 164.5
++offset_bottom = 93.0
++grow_horizontal = 2
++grow_vertical = 2
++theme_override_font_sizes/font_size = 46
++text = "Game Over!"
++horizontal_alignment = 1
++vertical_alignment = 1
++
+ [connection signal="fish_died" from="Spawner" to="." method="_on_slime_died"]
  [connection signal="body_entered" from="SlimeGrinder" to="." method="_on_slime_detector_body_entered"]
  [connection signal="body_entered" from="SlimeGrinder" to="SlimeGrinder" method="_on_body_entered"]
 diff --git a/project.godot b/project.godot
-index 086b0a8..466881f 100644
+index 466881f..002229a 100644
 --- a/project.godot
 +++ b/project.godot
-@@ -14,7 +14,3 @@ config/name="Godot Components"
+@@ -14,3 +14,9 @@ config/name="Godot Components"
  run/main_scene="res://main.tscn"
  config/features=PackedStringArray("4.3", "Forward Plus")
  config/icon="res://icon.svg"
--
--[autoload]
--
--PointCounter="*res://point_counter.gd"
-diff --git a/slime.gd b/slime.gd
-index 144262d..300caef 100644
---- a/slime.gd
-+++ b/slime.gd
-@@ -6,6 +6,8 @@ extends CharacterBody2D
- 
- @onready var health_bar: ProgressBar = $ProgressBar
- 
-+signal died()
 +
- func _ready() -> void:
- 	health_bar.max_value = health
- 	health_bar.value = health
-@@ -21,7 +23,7 @@ func _physics_process(delta: float) -> void:
- 		
- 		if collider.has_method("take_damage"):
- 			collider.take_damage(impact_damage)
--			PointCounter.count_point()
-+			died.emit()
- 			queue_free()
++[global_group]
++
++destroyed_on_game_over=""
++enemy=""
++friend=""
+diff --git a/projectile.tscn b/projectile.tscn
+index a2625de..5b08e4b 100644
+--- a/projectile.tscn
++++ b/projectile.tscn
+@@ -21,7 +21,7 @@ animations = [{
+ [sub_resource type="RectangleShape2D" id="RectangleShape2D_vrnfv"]
+ size = Vector2(85, 48)
  
- func take_damage(damage: float):
-@@ -29,5 +31,5 @@ func take_damage(damage: float):
- 	health_bar.value = health
- 	
- 	if health <= 0:
--		PointCounter.count_point()
-+		died.emit()
- 		queue_free()
-diff --git a/spawner.gd b/spawner.gd
-index f2020ec..ba401c5 100644
---- a/spawner.gd
-+++ b/spawner.gd
-@@ -4,6 +4,7 @@ extends Marker2D
- @export var spawn_interval_max: float = 3
- @export var items: Array[PackedScene] = []
+-[node name="Projectile" type="Sprite2D"]
++[node name="Projectile" type="Sprite2D" groups=["destroyed_on_game_over"]]
+ script = ExtResource("1_ir7kn")
+ metadata/_edit_group_ = true
  
-+signal fish_died()
+diff --git a/slime.tscn b/slime.tscn
+index 4d2acd7..ffa1c02 100644
+--- a/slime.tscn
++++ b/slime.tscn
+@@ -70,7 +70,7 @@ animations = [{
+ [sub_resource type="RectangleShape2D" id="RectangleShape2D_hgbwr"]
+ size = Vector2(69, 75)
  
- func _ready() -> void:
- 	spawn_something()
-@@ -12,6 +13,11 @@ func spawn_something():
- 	var slime_scene = items.pick_random()
- 	var new_slime = slime_scene.instantiate()
- 	
-+	new_slime.died.connect(on_fish_died)
-+	
- 	add_child(new_slime)
- 
- 	get_tree().create_timer(randf_range(spawn_interval_min, spawn_interval_max)).timeout.connect(spawn_something)
-+	
-+func on_fish_died():
-+	fish_died.emit()
-diff --git a/staged_diff.txt b/staged_diff.txt
-index f91a4c3..e69de29 100644
---- a/staged_diff.txt
-+++ b/staged_diff.txt
-@@ -1,33 +0,0 @@
--diff --git a/game.gd b/game.gd
--index f411054..07cfd21 100644
----- a/game.gd
--+++ b/game.gd
--@@ -4,9 +4,16 @@ extends Node
-- @onready var slime_through_label: Label = $CanvasLayer/SlimeThroughLabel
-- @export var maximum_units_through: int = 5
-- 
--+var points: int = 0
--+
-- func _ready() -> void:
-- 	slime_through_label.text = str(maximum_units_through)
--+	PointCounter.point_counted.connect(_on_slime_died)
-- 
-- func _on_slime_detector_body_entered(body: Node2D) -> void:
-- 	maximum_units_through -= 1
-- 	slime_through_label.text = str(maximum_units_through)
--+
--+func _on_slime_died():
--+	points += 1
--+	score_label.text = str(points)
--diff --git a/point_counter.gd b/point_counter.gd
--index df08e51..fe890af 100644
----- a/point_counter.gd
--+++ b/point_counter.gd
--@@ -1,4 +1,6 @@
-- extends Node
-- 
--+signal point_counted()
--+
-- func count_point():
---	print("Counting points!")
--+	point_counted.emit()
+-[node name="Slime" type="CharacterBody2D" groups=["enemy"]]
++[node name="Slime" type="CharacterBody2D" groups=["destroyed_on_game_over", "enemy"]]
+ collision_mask = 2
+ script = ExtResource("1_tsb1d")
+ metadata/_edit_group_ = true
